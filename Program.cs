@@ -7,6 +7,7 @@ using System.Windows.Forms;
 namespace PayloadValidation
 {
     //version 0.1 main function to validate truck and chassis payload to container(s) weight 
+    //version 0.2 save to json format & display to grid
     static class Program
     {
         /// <summary>

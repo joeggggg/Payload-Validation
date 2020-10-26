@@ -17,28 +17,6 @@ namespace PayloadValidation
             InitializeComponent();
         }
 
-        //public static double calCntrOverloadThreshold()
-        //{
-        //    job jobN = new job();
-        //    truck truckN = new truck();
-        //    chassis chassisN = new chassis();
-        //    double cntrOverloadThreshold = 0;
-        //    double factor1 = 0;
-        //    double factor2 = 0;
-        //    double factor3 = 0;
-        //    //calculate factor 1 
-        //    factor1 = jobN.authorizedPayload * 1.1 - truckN.truckTareWeight - chassisN.chassisTareWeight - jobN.driverWeight;
-        //    //calculate factor 2
-        //    factor2 = (jobN.authorizedPayload * 1.1 + chassisN.chassisAuthorizedPayload - truckN.truckTareWeight - chassisN.chassisTareWeight - jobN.driverWeight) / 2;
-        //    //calculate factor 3
-        //    factor3 = (jobN.authorizedPayload * 1.1 + truckN.truckAuthorizedPayload - truckN.truckTareWeight - 2 * chassisN.chassisTareWeight - jobN.driverWeight) / 2;
-
-        //    if (factor1 < factor2) { cntrOverloadThreshold = factor1; } else { cntrOverloadThreshold = factor2; };
-        //    if (cntrOverloadThreshold < factor3) { }
-        //    else { cntrOverloadThreshold = factor3; }
-        //    return cntrOverloadThreshold;
-        //}
-
         public static bool calStep1()
         {
             truck truckN = new truck();
@@ -91,22 +69,6 @@ namespace PayloadValidation
             return isvalid;
         }
 
-        //public bool finalValidation()
-        //{
-        //    job jobN = new job();
-        //    truck truckN = new truck();
-        //    chassis chassisN = new chassis();
-        //    // jobN.driverWeight = int.Parse(tbDriverWeight.Text);
-        //    bool finalValidate = false;
-        //    if (Form1.calStep1() == true && Form1.calStep2() == true && Form1.calStep3() == true && jobN.containersWeight < Form1.calCntrOverloadThreshold())
-        //    {
-        //        finalValidate = true;
-        //    }
-        //    else { finalValidate = false; }
-
-        //    return finalValidate;
-        //}
-
         private void button1_Click(object sender, EventArgs e)
         {
             //need to add validation
@@ -124,31 +86,25 @@ namespace PayloadValidation
 
             job jobN = new job();
             jobN.containersWeight = double.Parse(tbContainerWeightSum.Text);
-            jobN.driverWeight = int.Parse(tbDriverWeight.Text);
-            // jobN.totalAxleQty = truckN.truckAxle + chassisN.chassisAxle;
+            jobN.driverWeight = int.Parse(tbDriverWeight.Text);          
             jobN.totalAxleQty = int.Parse(tbTruckAxleQty.Text)+ int.Parse(tbChassisAxleQty.Text);
             //testing
             lbtotalaxleqty.Text = "Total Axle Qty : "+jobN.totalAxleQty.ToString();
             //set authorized payload by total axle quantity
-            if (jobN.totalAxleQty == 3) 
-            { 
-                jobN.authorizedPayload = 26000; 
-            }
-            else if (jobN.totalAxleQty == 4) 
-            { 
-                jobN.authorizedPayload = 24000; 
-            }
-            else if (jobN.totalAxleQty == 5) { 
-                jobN.authorizedPayload = 42000; 
-            }
-            else { 
-                jobN.authorizedPayload = 48000; 
-            }
+            var authorizedPayloadbyAxle = new Dictionary<double, double>(){
+            {3,26000},
+            {4,34000},
+            {5,42000},
+            {6,48000}
+            };
+            foreach (var kvp in authorizedPayloadbyAxle)
+                if (jobN.totalAxleQty == kvp.Key)
+                {
+                    jobN.authorizedPayload = kvp.Value;
+                };       
+
             //testing
             lbauthorizedpayload.Text = "Authorized Payload : "+ jobN.authorizedPayload.ToString();
-            //dang bi loi phan nay
-            // tbContainerThreshold.Text = calCntrOverloadThreshold().ToString();
-            // nen tam thoi comment func  calCntrOverloadThreshold()
 
             double cntrOverloadThreshold = 0;
             double factor1 = 0;
@@ -156,29 +112,16 @@ namespace PayloadValidation
             double factor3 = 0;
             //calculate factor 1 
             factor1 = jobN.authorizedPayload * 1.1 - truckN.truckTareWeight - chassisN.chassisTareWeight - jobN.driverWeight;
-            lbfactor1.Text = "f1 : "+factor1.ToString();
+            lbfactor1.Text = "Factor 1 : "+ Math.Ceiling(factor1).ToString();
             //calculate factor 2
             factor2 = ((jobN.authorizedPayload * 1.1) + chassisN.chassisAuthorizedPayload - truckN.truckTareWeight - chassisN.chassisTareWeight - jobN.driverWeight) / 2;
-            lbfactor2.Text = "f2 : "+factor2.ToString();
+            lbfactor2.Text = "Factor 2 : " + Math.Ceiling(factor2).ToString();
             //calculate factor 3
             factor3 = ((jobN.authorizedPayload * 1.1) + truckN.truckAuthorizedPayload - truckN.truckTareWeight - (2 * chassisN.chassisTareWeight) - jobN.driverWeight) / 2;
-            lbfactor3.Text = "f3 : "+factor3.ToString();
+            lbfactor3.Text = "Factor 3 : " + Math.Ceiling(factor3).ToString();
             double[] factors = { factor1, factor2, factor3 };
             cntrOverloadThreshold = factors.Min();
 
-            //if (factor1 < factor2) 
-            //{ 
-            //    cntrOverloadThreshold = factor1; 
-            //} 
-            //else { 
-            //    cntrOverloadThreshold = factor2; 
-            //};
-            //if (cntrOverloadThreshold < factor3) 
-            //{ 
-            //}
-            //else { 
-            //    cntrOverloadThreshold = factor3; 
-            //}
             tbContainerThreshold.Text = Math.Ceiling(cntrOverloadThreshold).ToString();
             jobN.cntrOverloadThreshold = cntrOverloadThreshold;
 

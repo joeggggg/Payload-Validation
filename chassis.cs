@@ -8,16 +8,16 @@ namespace PayloadValidation
 {
     class chassis
     {
-        public string chassisNo { get; set; }
+      
         public int chassisTareWeight { get; set; }
-        public int chassisAuthorizedPayload { get; set; }
-        public int chassisMaxWeight { get; set; }
+        public int chassisAllowedMaxWeight { get; set; }
         public int chassisAxle { get; set; }
-        //public chassis(string chassisNo, int chassisTareWeight, int chassisAuthorizedPayload, int chassisMaxWeight, int chassisAxle)
+
+        //public chassis(string chassisNo, int chassisTareWeight, int chassisAllowedMaxWeight, int chassisMaxWeight, int chassisAxle)
         //{
         //    this.chassisNo = chassisNo;
         //    this.chassisTareWeight = chassisTareWeight;
-        //    this.chassisAuthorizedPayload = chassisAuthorizedPayload;
+        //    this.chassisAllowedMaxWeight = chassisAllowedMaxWeight;
         //    this.chassisMaxWeight = chassisMaxWeight;
         //    this.chassisAxle = chassisAxle;
         //}

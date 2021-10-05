@@ -17,79 +17,25 @@ namespace PayloadValidation
             InitializeComponent();
         }
 
-        public static bool calStep1()
+        public void button1_Click(object sender, EventArgs e)
         {
+            //need to add validation for input value
             truck truckN = new truck();
-            chassis chassisN = new chassis();
-            job jobN = new job();
-            bool isvalid = false;
-            if (jobN.containersWeight > (truckN.truckTareWeight + chassisN.chassisTareWeight + chassisN.chassisAuthorizedPayload) * 1.1)
-            {
-                isvalid = false;
-            }
-            else
-            {
-                isvalid = true;
-            }
-
-            return isvalid;
-        }
-
-        public static bool calStep2()
-        {
-            truck truckN = new truck();
-            chassis chassisN = new chassis();
-            job jobN = new job();
-            bool isvalid = false;
-            if (jobN.containersWeight > (truckN.truckTareWeight + truckN.truckAuthorizedPayload + jobN.driverWeight) * 1.1)
-            {
-                isvalid = false;
-            }
-            else
-            {
-                isvalid = true;
-            }
-            return isvalid;
-        }
-
-        public static bool calStep3()
-        {
-            truck truckN = new truck();
-            chassis chassisN = new chassis();
-            job jobN = new job();
-            bool isvalid = false;
-            if ((truckN.truckTareWeight + chassisN.chassisTareWeight + jobN.containersWeight) > jobN.authorizedPayload * 1.1)
-            {
-                isvalid = false;
-            }
-            else
-            {
-                isvalid = true;
-            }
-            return isvalid;
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            //need to add validation
-            truck truckN = new truck();
-            truckN.truckNo = tbTruckNo.ToString();
+          // truckN.truckNo = tbTruckNo.ToString();
             truckN.truckTareWeight = int.Parse(tbTruckTareWeight.Text);
-            truckN.truckAuthorizedPayload = int.Parse(tbTruckAuthorizedPayload.Text);
+            truckN.truckAllowedMaxWeight = int.Parse(tbTruckAuthorizedPayload.Text);
             truckN.truckAxle = int.Parse(tbTruckAxleQty.Text);
 
             chassis chassisN = new chassis();
-            chassisN.chassisNo = tbChassisNo.ToString();
+          // chassisN.chassisNo = tbChassisNo.ToString();
             chassisN.chassisTareWeight = int.Parse(tbChassisTareWeight.Text);
-            chassisN.chassisAuthorizedPayload = int.Parse(tbChassisAuthorizedPayload.Text);
+            chassisN.chassisAllowedMaxWeight = int.Parse(tbChassisAuthorizedPayload.Text);
             chassisN.chassisAxle = int.Parse(tbChassisAxleQty.Text);
 
             job jobN = new job();
-            jobN.containersWeight = double.Parse(tbContainerWeightSum.Text);
+            jobN.containersWeight = double.Parse(tbContainerWeightSum.Text); 
             jobN.driverWeight = int.Parse(tbDriverWeight.Text);          
-            jobN.totalAxleQty = int.Parse(tbTruckAxleQty.Text)+ int.Parse(tbChassisAxleQty.Text);
-            //testing
-            lbtotalaxleqty.Text = "Total Axle Qty : "+jobN.totalAxleQty.ToString();
+            jobN.totalAxleQty = int.Parse(tbTruckAxleQty.Text) + int.Parse(tbChassisAxleQty.Text);
             //set authorized payload by total axle quantity
             var authorizedPayloadbyAxle = new Dictionary<double, double>(){
             {3,26000},
@@ -101,47 +47,70 @@ namespace PayloadValidation
                 if (jobN.totalAxleQty == kvp.Key)
                 {
                     jobN.authorizedPayload = kvp.Value;
-                };       
+                };
 
-            //testing
-            lbauthorizedpayload.Text = "Authorized Payload : "+ jobN.authorizedPayload.ToString();
-
-            double cntrOverloadThreshold = 0;
-            double factor1 = 0;
-            double factor2 = 0;
-            double factor3 = 0;
-            //calculate factor 1 
-            factor1 = jobN.authorizedPayload * 1.1 - truckN.truckTareWeight - chassisN.chassisTareWeight - jobN.driverWeight;
-            lbfactor1.Text = "Factor 1 : "+ Math.Ceiling(factor1).ToString();
-            //calculate factor 2
-            factor2 = ((jobN.authorizedPayload * 1.1) + chassisN.chassisAuthorizedPayload - truckN.truckTareWeight - chassisN.chassisTareWeight - jobN.driverWeight) / 2;
-            lbfactor2.Text = "Factor 2 : " + Math.Ceiling(factor2).ToString();
-            //calculate factor 3
-            factor3 = ((jobN.authorizedPayload * 1.1) + truckN.truckAuthorizedPayload - truckN.truckTareWeight - (2 * chassisN.chassisTareWeight) - jobN.driverWeight) / 2;
-            lbfactor3.Text = "Factor 3 : " + Math.Ceiling(factor3).ToString();
-            double[] factors = { factor1, factor2, factor3 };
-            cntrOverloadThreshold = factors.Min();
-
-            tbContainerThreshold.Text = Math.Ceiling(cntrOverloadThreshold).ToString();
-            jobN.cntrOverloadThreshold = cntrOverloadThreshold;
-
-            if (Form1.calStep1() == true)
+            //Step 1:
+            // Validate if Container weight< (Truck’s Allowed Max Weight - Chassis’s Tare weight – 65) * 110%
+            bool calStep1_isvalid = false;
+            if (jobN.containersWeight < (truckN.truckAllowedMaxWeight - chassisN.chassisTareWeight - jobN.driverWeight) * 1.1)
+            {
+                calStep1_isvalid = true;
+            }
+            else
+            {
+                calStep1_isvalid = false;
+            }
+            if (calStep1_isvalid == true)
             {
                 lbStep1Result.Text = "PASSED";
                 lbStep1Result.ForeColor = System.Drawing.Color.Green;
             }
-            else {
+            else
+            {
                 lbStep1Result.Text = "FAILED";
                 lbStep1Result.ForeColor = System.Drawing.Color.Red;
-            }
-            if (Form1.calStep2() == true) { lbStep2Result.Text = "PASSED"; 
-                lbStep2Result.ForeColor = System.Drawing.Color.Green; 
             } 
-            else { 
-                lbStep2Result.Text = "FAILED"; 
-                lbStep2Result.ForeColor = System.Drawing.Color.Red; 
+
+            //Step 2:
+            //Validate if Container weight<Chassis’s allowed max weight * 110%
+            bool calStep2_isvalid = false;
+            if (jobN.containersWeight < (chassisN.chassisAllowedMaxWeight) * 1.1)
+            {
+                calStep2_isvalid = true;
             }
-            if (Form1.calStep3() == true) { 
+            else
+            {
+                calStep2_isvalid = false;
+            }
+
+            if (calStep2_isvalid == true)
+            {
+                lbStep2Result.Text = "PASSED";
+                lbStep2Result.ForeColor = System.Drawing.Color.Green;
+            }
+            else
+            {
+                lbStep2Result.Text = "FAILED";
+                lbStep2Result.ForeColor = System.Drawing.Color.Red;
+            }
+
+            //Step 3:
+            //•	If total number of Axle = 3, then validate if (Container weight + Truck’s Tare weight + Chassis Tare weight) < 26000 * 110%
+            //•	If total number of Axle = 4, then validate if (Container weight + Truck’s Tare weight + Chassis Tare weight) < 34000 * 110%
+            //•	If total number of Axle = 5, then validate if (Container weight + Truck’s Tare weight + Chassis Tare weight) < 42000 * 110%
+            //•	If total number of Axle = 6, then validate if (Container weight + Truck’s Tare weight + Chassis Tare weight) < 48000 * 110% 
+
+            bool calStep3_isvalid = false;
+            if ((jobN.containersWeight + truckN.truckTareWeight + chassisN.chassisTareWeight) < jobN.authorizedPayload * 1.1)
+            {
+                calStep3_isvalid = true;
+            }
+            else
+            {
+                calStep3_isvalid = false;
+            }
+
+            if (calStep3_isvalid == true) { 
                 lbStep3Result.Text = "PASSED"; 
                 lbStep3Result.ForeColor = System.Drawing.Color.Green; 
             } else { 
@@ -150,35 +119,35 @@ namespace PayloadValidation
             }
 
             //final result display    
-           // bool finalValidate = false;
-            if (Form1.calStep1() == true && Form1.calStep2() == true && Form1.calStep3() == true && jobN.containersWeight < cntrOverloadThreshold)
+            if (calStep1_isvalid == true && calStep2_isvalid == true && calStep3_isvalid == true)
             {
-              //  finalValidate = true;
                 lbFinal.Text = "PASSED";
                 lbFinal.ForeColor = System.Drawing.Color.Green;
                 jobN.finalresult = true;
             }
             else { 
-              //  finalValidate = false; 
                 lbFinal.Text = "FAILED";
                 lbFinal.ForeColor = System.Drawing.Color.Red;
                 jobN.finalresult = false;
             }
+         }
 
-            //ver 0.2 se bo sung tinh nang display len grid + luu vao json file
-            //dataGridView1.Rows[0].Cells[0].Value = 1;
-            //dataGridView1.Rows[0].Cells[1].Value = tbTruckNo.Text;
-            //dataGridView1.Rows[0].Cells[2].Value = tbTruckNo.Text;
-            //dataGridView1.Rows[0].Cells[3].Value = tbTruckAuthorizedPayload.Text;
-            //dataGridView1.Rows[0].Cells[4].Value = tbTruckAxleQty.Text;
-            //dataGridView1.Rows[0].Cells[5].Value = tbChassisNo.Text;
-            //dataGridView1.Rows[0].Cells[6].Value = tbChassisTareWeight.Text;
-            //dataGridView1.Rows[0].Cells[7].Value = tbChassisAuthorizedPayload.Text;
-            //dataGridView1.Rows[0].Cells[8].Value = tbChassisAxleQty.Text;
-            //dataGridView1.Rows[0].Cells[9].Value = tbContainerThreshold.Text;
+        private void btnReset_Click(object sender, EventArgs e)
+        {
+            tbTruckTareWeight.Text = null;
+            tbTruckAuthorizedPayload.Text = null;
+            tbTruckTareWeight.Text = null;
+            tbTruckAxleQty.Text = null;
+            tbChassisTareWeight.Text = null;
+            tbChassisAuthorizedPayload.Text = null;
+            tbChassisAxleQty.Text = null;
+            tbContainerWeightSum.Text = null;
+            lbStep1Result.Text = null;
+            lbStep2Result.Text = null;
+            lbStep3Result.Text = null;
+            lbFinal.Text = null;
+
         }
-
-
     }
 }
 

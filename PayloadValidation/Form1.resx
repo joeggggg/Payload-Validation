@@ -117,4 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="richTextBox1.Text" xml:space="preserve">
+    <value>Mantis 118310
+Three steps of the payload validation shall be modified as follow:
+Step 1:
+Validate if Container weight &lt; (Truck’s Allowed Max Weight - Chassis’s Tare weight – 65) * 110%
+Step 2:
+Validate if Container weight &lt; Chassis’s allowed max weight * 110%
+Step 3:
+• If total number of Axle = 3, then validate if (Container weight + Truck’s Tare weight + Chassis Tare weight) &lt; 26000 * 110%
+• If total number of Axle = 4, then validate if (Container weight + Truck’s Tare weight + Chassis Tare weight) &lt; 34000 * 110%
+• If total number of Axle = 5, then validate if (Container weight + Truck’s Tare weight + Chassis Tare weight) &lt; 42000 * 110%
+• If total number of Axle = 6, then validate if (Container weight + Truck’s Tare weight + Chassis Tare weight) &lt; 48000 * 110%
+
+So, the truck is eligible to carries the containers only when 03 steps validation above are both valid.
+Three factors and Container Overload Threshold in the current business rule shall not be considered and shall be removed</value>
+  </data>
 </root>

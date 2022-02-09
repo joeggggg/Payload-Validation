@@ -37,6 +37,7 @@ namespace PayloadValidation
             jobN.driverWeight = int.Parse(tbDriverWeight.Text);          
             jobN.totalAxleQty = int.Parse(tbTruckAxleQty.Text) + int.Parse(tbChassisAxleQty.Text);
             //set authorized payload by total axle quantity
+            
             var authorizedPayloadbyAxle = new Dictionary<double, double>(){
             {3,26000},
             {4,34000},
@@ -48,9 +49,9 @@ namespace PayloadValidation
                 {
                     jobN.authorizedPayload = kvp.Value;
                 };
-
+            
             //Step 1:
-            // Validate if Container weight< (Truck’s Allowed Max Weight - Chassis’s Tare weight – 65) * 110%
+            // Validate if Sum of Container weight < (Truck’s Allowed Max Weight - Chassis’s Tare weight – 65) * 110%
             bool calStep1_isvalid = false;
             if (jobN.containersWeight < (truckN.truckAllowedMaxWeight - chassisN.chassisTareWeight - jobN.driverWeight) * 1.1)
             {
@@ -72,7 +73,7 @@ namespace PayloadValidation
             } 
 
             //Step 2:
-            //Validate if Container weight<Chassis’s allowed max weight * 110%
+            //Validate if Sum of Container weight < Chassis’s allowed max weight * 110%
             bool calStep2_isvalid = false;
             if (jobN.containersWeight < (chassisN.chassisAllowedMaxWeight) * 1.1)
             {
